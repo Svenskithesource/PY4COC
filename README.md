@@ -9,4 +9,4 @@ A deobfuscator for multiple python obfuscators, supports exe's packed with pyins
 I know the code is a mess but just read the last lines and you will see how to add your own deobfuscator. Make a pull request if you want to contribute.
 
 ## Credits
-svenskithesource & Junk
+svenskithesource & OW

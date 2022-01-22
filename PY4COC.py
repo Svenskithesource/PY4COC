@@ -3,6 +3,9 @@ import os, struct, marshal, zlib, sys, re, json, base64, shutil, colorama, time
 from uuid import uuid4 as uniquename
 colorama.init(convert=True)
 
+def decompyle(filename):
+    os.system(f'pycdc.exe {filename}.pyc > {filename}.py')
+
 # imp is deprecated in Python3 in favour of importlib
 if sys.version_info.major == 3:
     from importlib.util import MAGIC_NUMBER
@@ -181,10 +184,7 @@ class PyInstArchive:
                 print('[+] Possible entry point: {0}.pyc'.format(entry.name))
                 self._writePyc(entry.name + '.pyc', data)
                 
-                if self.pyver > 38:
-                    os.system('decompyle3 -o {0}.py {0}.pyc'.format(entry.name))
-                else:
-                    os.system('uncompyle6 -o {0}.py {0}.pyc'.format(entry.name))
+                decompyle(entry.name)
 
             elif entry.typeCmprsData == b'M' or entry.typeCmprsData == b'm':
                 # M -> ARCHIVE_ITEM_PYPACKAGE
@@ -379,10 +379,7 @@ class Deob:
 
         name = os.path.splitext(self.filename)[0]
         os.rename(self.filename, name + ".pyc")
-        if self.pyver > 38:
-            os.system('decompyle3 -o {0}.py {0}.pyc'.format(name))
-        else:
-            os.system('uncompyle6 -o {0}.py {0}.pyc'.format(name))
+        os.system('pycdc.exe {0}.pyc > {0}.py'.format(entry.name))
         os.remove(name + ".pyc")
         return True
 
@@ -496,7 +493,10 @@ def main():
         time.sleep(3)
     else:
         filename = sys.argv[1]
-        if not filename.endswith(".py"):
+        if filename.endswith(".pyc"):
+            decompyle(filename[:-4])
+            filename = filename[:-1]
+        elif not filename.endswith(".py"):
             os.system('cls')
             print(colorama.Fore.CYAN + logo + colorama.Fore.GREEN)
             os.system('title PY4COC By 𝘾𝙤𝙭#4633 and svenskithesource#2815')
